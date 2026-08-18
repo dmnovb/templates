@@ -43,7 +43,7 @@ Rebuild the local image after dependency changes. The anonymous `node_modules` v
 
 ## Publish `latest` (GitHub Actions → Docker Hub)
 
-Pushes to `main` that touch `Frontend/` build the production image and push `dmnovb/frontend:latest` (and a `sha-…` tag).
+Pushes to `main` that touch `Frontend/` build the production image and push `bleudechanel/frontend:latest` (and a `sha-…` tag).
 
 Add these on the GitHub repo (**Settings → Secrets and variables → Actions**):
 
@@ -52,7 +52,7 @@ Add these on the GitHub repo (**Settings → Secrets and variables → Actions**
 | `DOCKERHUB_USERNAME` | Variable or secret | Docker Hub username |
 | `DOCKERHUB_TOKEN` | Secret | [Access token](https://hub.docker.com/settings/security) with Read & Write |
 
-Override the pull image name with `DOCKERHUB_IMAGE=youruser/frontend:latest` if it is not `dmnovb/frontend`.
+Override the pull image name with `DOCKERHUB_IMAGE=youruser/frontend:latest` if it is not `bleudechanel/frontend`.
 
 ## Add shadcn components
 

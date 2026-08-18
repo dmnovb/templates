@@ -12,4 +12,4 @@ npm install
 npm run dev
 ```
 
-Pushes to `main` under `Frontend/` publish `dmnovb/frontend:latest` to Docker Hub. See `Frontend/README.md` for the required GitHub secrets.
+Pushes to `main` under `Frontend/` publish `bleudechanel/frontend:latest` to Docker Hub. See `Frontend/README.md` for the required GitHub secrets.

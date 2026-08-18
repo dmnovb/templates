@@ -24,7 +24,7 @@ services:
 
   published:
     profiles: ["hub"]
-    image: ${DOCKERHUB_IMAGE:-dmnovb/frontend:latest}
+    image: ${DOCKERHUB_IMAGE:-bleudechanel/frontend:latest}
     ports:
       - "8080:80"
     restart: unless-stopped
