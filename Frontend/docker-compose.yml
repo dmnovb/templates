@@ -21,3 +21,10 @@ services:
     ports:
       - "8080:80"
     restart: unless-stopped
+
+  published:
+    profiles: ["hub"]
+    image: ${DOCKERHUB_IMAGE:-dmnovb/frontend:latest}
+    ports:
+      - "8080:80"
+    restart: unless-stopped
