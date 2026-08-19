@@ -8,6 +8,7 @@ Vite + React + Tailwind + shadcn/ui, with Docker for both local HMR and a produc
 - Tailwind CSS 4 (`@tailwindcss/vite`)
 - shadcn/ui (Nova / Radix)
 - `Dockerfile.dev` (Vite HMR) + `Dockerfile` (nginx production) + Compose
+- `.docker/local/entrypoint.sh` and `.docker/remote/entrypoint.sh`
 
 ## Start locally
 
