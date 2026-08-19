@@ -46,14 +46,27 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=sha-
 
+      - name: Build base image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./Frontend
+          file: ./Frontend/.docker/Dockerfile.base
+          platforms: linux/amd64,linux/arm64
+          tags: frontend-base:ci
+          push: false
+          cache-from: type=gha,scope=frontend-base
+          cache-to: type=gha,mode=max,scope=frontend-base
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./Frontend
-          file: ./Frontend/Dockerfile
+          file: ./Frontend/.docker/remote/Dockerfile.remote
+          build-args: |
+            BASE_IMAGE=frontend-base:ci
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=frontend-remote
+          cache-to: type=gha,mode=max,scope=frontend-remote

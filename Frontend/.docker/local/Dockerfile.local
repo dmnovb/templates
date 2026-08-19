@@ -1,11 +1,10 @@
 # syntax=docker/dockerfile:1
 
-FROM node:24-alpine
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY . .
+ARG BASE_IMAGE=frontend-base
+FROM ${BASE_IMAGE}
+
 COPY .docker/local/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
 EXPOSE 5173
 ENTRYPOINT ["/entrypoint.sh"]
