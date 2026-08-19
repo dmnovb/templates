@@ -2,7 +2,7 @@ services:
   web:
     build:
       context: .
-      target: development
+      dockerfile: Dockerfile.dev
     ports:
       - "5173:5173"
     volumes:
@@ -17,7 +17,7 @@ services:
     profiles: ["prod"]
     build:
       context: .
-      target: production
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
     restart: unless-stopped
