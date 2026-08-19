@@ -7,8 +7,7 @@ Vite + React + Tailwind + shadcn/ui, with Docker for both local HMR and a produc
 - Vite 8 + React 19 + TypeScript
 - Tailwind CSS 4 (`@tailwindcss/vite`)
 - shadcn/ui (Nova / Radix)
-- `Dockerfile.dev` (Vite HMR) + `Dockerfile` (nginx production) + Compose
-- `.docker/local/entrypoint.sh` and `.docker/remote/entrypoint.sh`
+- `.docker/Dockerfile.base` (Node OS + deps) with `.docker/local/` and `.docker/remote/` overlays
 
 ## Start locally
 
@@ -41,6 +40,18 @@ docker compose --profile hub up
 ```
 
 Rebuild the local image after dependency changes. The anonymous `node_modules` volume keeps container installs off your host.
+
+### Docker layout
+
+| Path | Role |
+| --- | --- |
+| `.docker/Dockerfile.base` | Node Alpine base image with `npm ci` and app source |
+| `.docker/local/Dockerfile.local` | Dev overlay; runs Vite via `entrypoint.sh` |
+| `.docker/remote/Dockerfile.remote` | Production overlay; builds static assets and serves nginx |
+| `.docker/local/entrypoint.sh` | Setup, then `exec npm run dev …` (long-running) |
+| `.docker/remote/entrypoint.sh` | Config check, then `exec nginx …` (long-running) |
+
+Compose builds `frontend-base` first, then the local or remote overlay.
 
 ## Publish `latest` (GitHub Actions → Docker Hub)
 

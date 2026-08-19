@@ -1,8 +1,18 @@
 services:
+  base:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.base
+    image: frontend-base
+
   web:
     build:
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: .docker/local/Dockerfile.local
+      args:
+        BASE_IMAGE: frontend-base
+    depends_on:
+      - base
     ports:
       - "5173:5173"
     volumes:
@@ -17,7 +27,11 @@ services:
     profiles: ["prod"]
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: .docker/remote/Dockerfile.remote
+      args:
+        BASE_IMAGE: frontend-base
+    depends_on:
+      - base
     ports:
       - "8080:80"
     restart: unless-stopped
