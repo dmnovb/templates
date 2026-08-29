@@ -20,19 +20,19 @@ App runs at [http://localhost:5173](http://localhost:5173).
 
 ## Start with Docker
 
-Dev server (source mounted, HMR on):
+Dev server (local overlay, source mounted, HMR on):
 
 ```sh
 make docker-start
 ```
 
-Rebuild after dependency or Dockerfile changes (drops the anonymous `node_modules` volume and recreates containers):
+Rebuild the local overlay after dependency or Dockerfile changes (drops the anonymous `node_modules` volume and recreates containers):
 
 ```sh
 make docker-refresh
 ```
 
-Production image (static files behind nginx on port 8080):
+Production image (remote overlay, static files behind nginx on port 8080):
 
 ```sh
 docker compose --profile prod up --build
@@ -57,7 +57,7 @@ The anonymous `node_modules` volume keeps container installs off your host.
 | `.docker/local/entrypoint.sh` | Setup, then `exec npm run dev …` (long-running) |
 | `.docker/remote/entrypoint.sh` | Config check, then `exec nginx …` (long-running) |
 
-Compose builds `frontend-base` first, then the local or remote overlay.
+`make docker-start` and `make docker-refresh` run the **local** overlay only (`local` service). The **remote** overlay is the `prod` profile (`remote` service). `base` is a build-only image; the Makefile does not start it as a container.
 
 ## Publish `latest` (GitHub Actions → Docker Hub)
 

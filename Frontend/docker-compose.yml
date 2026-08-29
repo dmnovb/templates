@@ -5,14 +5,14 @@ services:
       dockerfile: .docker/Dockerfile.base
     image: frontend-base
 
-  web:
+  local:
     build:
       context: .
       dockerfile: .docker/local/Dockerfile.local
+      additional_contexts:
+        frontend-base: "service:base"
       args:
         BASE_IMAGE: frontend-base
-    depends_on:
-      - base
     ports:
       - "5173:5173"
     volumes:
@@ -23,15 +23,15 @@ services:
     stdin_open: true
     tty: true
 
-  app:
+  remote:
     profiles: ["prod"]
     build:
       context: .
       dockerfile: .docker/remote/Dockerfile.remote
+      additional_contexts:
+        frontend-base: "service:base"
       args:
         BASE_IMAGE: frontend-base
-    depends_on:
-      - base
     ports:
       - "8080:80"
     restart: unless-stopped
