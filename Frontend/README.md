@@ -23,7 +23,13 @@ App runs at [http://localhost:5173](http://localhost:5173).
 Dev server (source mounted, HMR on):
 
 ```sh
-docker compose up --build
+make docker-start
+```
+
+Rebuild after dependency or Dockerfile changes (drops the anonymous `node_modules` volume and recreates containers):
+
+```sh
+make docker-refresh
 ```
 
 Production image (static files behind nginx on port 8080):
@@ -39,7 +45,7 @@ docker compose --profile hub pull
 docker compose --profile hub up
 ```
 
-Rebuild the local image after dependency changes. The anonymous `node_modules` volume keeps container installs off your host.
+The anonymous `node_modules` volume keeps container installs off your host.
 
 ### Docker layout
 
