@@ -1,0 +1,72 @@
+name: Publish Hobby image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Hobby/**"
+      - ".github/workflows/hobby-image.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: hobby-image
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  IMAGE: ${{ vars.DOCKERHUB_USERNAME || secrets.DOCKERHUB_USERNAME }}/hobby
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME || secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-
+
+      - name: Build base image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./Hobby
+          file: ./Hobby/.docker/Dockerfile.base
+          platforms: linux/amd64,linux/arm64
+          tags: hobby-base:ci
+          push: false
+          cache-from: type=gha,scope=hobby-base
+          cache-to: type=gha,mode=max,scope=hobby-base
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./Hobby
+          file: ./Hobby/.docker/remote/Dockerfile.remote
+          build-args: |
+            BASE_IMAGE=hobby-base:ci
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=hobby-remote
+          cache-to: type=gha,mode=max,scope=hobby-remote

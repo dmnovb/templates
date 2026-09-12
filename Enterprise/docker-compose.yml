@@ -1,0 +1,57 @@
+services:
+  base:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.base
+    image: enterprise-base
+
+  local:
+    build:
+      context: .
+      dockerfile: .docker/local/Dockerfile.local
+      additional_contexts:
+        enterprise-base: "service:base"
+      args:
+        BASE_IMAGE: enterprise-base
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      HOST: 0.0.0.0
+      CORS_ORIGIN: "*"
+    stdin_open: true
+    tty: true
+
+  remote:
+    profiles: ["prod"]
+    build:
+      context: .
+      dockerfile: .docker/remote/Dockerfile.remote
+      additional_contexts:
+        enterprise-base: "service:base"
+      args:
+        BASE_IMAGE: enterprise-base
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      CORS_ORIGIN: "*"
+    restart: unless-stopped
+
+  published:
+    profiles: ["hub"]
+    image: ${DOCKERHUB_IMAGE:-bleudechanel/enterprise:latest}
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      CORS_ORIGIN: "*"
+    restart: unless-stopped
